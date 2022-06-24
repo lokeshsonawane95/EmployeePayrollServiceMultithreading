@@ -75,5 +75,39 @@ namespace EmployeePayrollServiceMSTest
             DateTime endtime1 = DateTime.Now;
             Console.WriteLine("Total time for operation with thread: {0}", starttime1 - endtime1);
         }
+
+        [TestMethod]
+        public void AddingDataIntoListWithMultiThreading()
+        {
+            List<EmployeeDetails> employeeDetails = AddingDataToList();
+            Thread t1 = new Thread(() => employeePayrollOperations.AddEmployeeToPayroll(employeeDetails));
+            Thread t2 = new Thread(() => employeePayrollOperations.AddEmployeeToPayroll(employeeDetails));
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            t1.Start();
+            t2.Start();
+            stopwatch.Stop();
+            t1.Join();
+            t2.Join();
+            Console.WriteLine("Elapsed time with multithreading");
+            Console.WriteLine(stopwatch.Elapsed);
+        }
+
+        [TestMethod]
+        public void AddingDataIntoDataBaseWithMultiThreading()
+        {
+            List<EmployeeDetails> employeeDetails = AddingDataToList();
+            Thread t1 = new Thread(() => employeePayrollOperations.AddEmployeeToPayrollDataBase(employeeDetails));
+            Thread t2 = new Thread(() => employeePayrollOperations.AddEmployeeToPayrollDataBase(employeeDetails));
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            t1.Start();
+            t2.Start();
+            stopwatch.Stop();
+            t1.Join();
+            t2.Join();
+            Console.WriteLine("Elapsed time with multithreading");
+            Console.WriteLine(stopwatch.ElapsedMilliseconds);
+        }
     }
 }
