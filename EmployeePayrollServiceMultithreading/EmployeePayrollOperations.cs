@@ -9,6 +9,8 @@ namespace EmployeePayrollServiceMultithreading
 {
     public class EmployeePayrollOperations
     {
+        private static Mutex mut = new Mutex();
+
         public static string connectionString = @"data source = .; database = payroll; integrated security = true";
 
         SqlConnection connection = new SqlConnection(connectionString);
@@ -66,6 +68,26 @@ namespace EmployeePayrollServiceMultithreading
                     Console.WriteLine("Employee added" + employeeData.EmployeeName);
                 });
                 thread.Start();
+            });
+        }
+
+        public void AddEmployeeToPayrollDataBaseWithThreadWithSynchronization(List<EmployeeDetails> employeePayrollDataList)
+        {
+            employeePayrollDataList.ForEach(employeeData =>
+            {
+                Task thread = new Task(() =>
+                {
+                    mut.WaitOne();
+                    Console.WriteLine("Employee being added" + employeeData.EmployeeName);
+                    this.AddEmployeePayrollDatabase(employeeData);
+                    Console.WriteLine("Employee added" + employeeData.EmployeeName);
+                    Console.WriteLine("Current Thread Id" + Thread.CurrentThread.ManagedThreadId);
+                    
+                    mut.ReleaseMutex();
+                });
+                thread.Start();
+                
+                thread.Wait();
             });
         }
 

@@ -109,5 +109,15 @@ namespace EmployeePayrollServiceMSTest
             Console.WriteLine("Elapsed time with multithreading");
             Console.WriteLine(stopwatch.ElapsedMilliseconds);
         }
+
+        [TestMethod]
+        public void AddingDataintoDataBaseUsingThreading_WithSynchronization()
+        {
+            List<EmployeeDetails> employeeDetails = AddingDataToList();
+            DateTime starttime1 = DateTime.Now;
+            employeePayrollOperations.AddEmployeeToPayrollDataBaseWithThreadWithSynchronization(employeeDetails);
+            DateTime endtime1 = DateTime.Now;
+            Console.WriteLine("Total time for operation with thread: {0}", starttime1 - endtime1);
+        }
     }
 }
